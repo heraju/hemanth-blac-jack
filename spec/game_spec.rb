@@ -28,7 +28,7 @@ describe Game do
       it 'game starts dealer has a score' do
         game = Game.new('player')
         game.deal
-        game.play
+        game.start
         expect(game.player.score.class).to eql(Fixnum)
       end
     end

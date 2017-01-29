@@ -11,4 +11,9 @@ class Dealer
   def can_play?
     score < 17
   end
+
+  def bursted?
+    p 'Bursted' if score > 21
+    score > 21
+  end
 end

@@ -1,10 +1,10 @@
 class Game
-  attr_accessor :cards, :player, :dealer, :current_control
+  attr_accessor :cards, :player, :dealer
   def initialize(player_name)
     @cards = Card.cards
     @player = Player.new(player_name)
     @dealer = Dealer.new
-    @current_control = nil
+    @activity = []
   end
 
   def deal
@@ -12,7 +12,7 @@ class Game
     dealer.cards << hit
     player.cards << hit
     dealer.cards << hit
-    @current_control = player
+    @activity << player
   end
 
   def hit
@@ -21,11 +21,17 @@ class Game
     card
   end
 
+  def current_control
+    return @activity.last
+  end
+
   def stay
+    p current_control.class == Player
     if current_control.class == Player
-      current_control = dealer
+      @activity << dealer
+      p current_control.class
     else
-      current_control = player
+      @activity << player
     end
     play
   end
@@ -50,13 +56,12 @@ class Game
   end
 
   def play
-    check_nearest if !player.can_play? && !dealer.can_play?
     if current_control.can_play?
       puts "#{current_control.class} Playing"
       show_stats
       get_user_choose.chomp == "1" ? game_check : stay
     else
-      "#{current_control.class} Stay"
+      puts "#{current_control.class} Stay"
       stay
     end
   end
@@ -64,15 +69,29 @@ class Game
   def game_check
     current_control.cards << hit
     puts "This is #{current_control.class} score #{current_control.score}"
-    check_if_won
-    current_control.can_play? ? play : stay
+    if !check_if_won  && !check_if_bursted
+      current_control.can_play? ? play : stay
+    end
   end
 
   def check_if_won
-    'You Won !!! ' if current_control.score == 21
+    if current_control.score == 21
+      p 'You Won !!! '
+      return true
+    end
+    false
+  end
+
+  def check_if_bursted
+    current_control.bursted?
   end
 
   def check_nearest
     'Implement'
+  end
+
+  def start
+    check_nearest if !player.can_play? && !dealer.can_play?
+    play
   end
 end

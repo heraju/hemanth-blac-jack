@@ -12,4 +12,9 @@ class Player
   def can_play?
     score < 21
   end
+
+  def bursted?
+    p "#{self.class} Bursted" if score > 21
+    score > 21
+  end
 end
